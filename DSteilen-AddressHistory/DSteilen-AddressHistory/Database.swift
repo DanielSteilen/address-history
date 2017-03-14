@@ -32,20 +32,15 @@ class Database {
         }
     }
     
-    func pastToPresent(_ addressNum: Int, _ direction: String, _ streetName: String) -> String  {
+    func pastToPresent(_ addressNum: Int, _ direction: String, _ streetName: String, _ suffix: String) -> String  {
         var num: String = "Address"
         var street: String = "not found"
-        //print(direction + " " + streetName)
         let query = addresses.select(street1911, number1911)
-                            .filter(street1910 == (direction + " " + streetName) && number1910 == addressNum)
-        
-
+                            .filter(street1910 == (direction + " " + streetName + " " + suffix) && number1910 == addressNum)
         
         do {
             if let firstRow = try db!.pluck(query) {
-                print("First row = \(firstRow)")
                 num = firstRow.get(Expression<String>("Number1911")) //have to use string expression here
-                print("Unwrap is a success!")
                 street = firstRow.get(street1911)
             }
         } catch {
@@ -54,7 +49,24 @@ class Database {
       
         return num + " " + street
     }
-    //.filter(street1910 == "E Adams St" && number1910 == 54)
+    
+    func presentToPast(_ addressNum: Int, _ direction: String, _ streetName: String, _ suffix: String) -> String  {
+        var num: String = "Address"
+        var street: String = "not found"
+        let query = addresses.select(street1910, number1910)
+            .filter(street1911 == (direction + " " + streetName + " " + suffix) && number1911 == addressNum)
+        
+        do {
+            if let firstRow = try db!.pluck(query) {
+                num = firstRow.get(Expression<String>("Number1910")) //have to use string expression here
+                street = firstRow.get(street1910)
+            }
+        } catch {
+            print("Pluck row failed.")
+        }
+        
+        return num + " " + street
+    }
     
     static func getSingleton() -> Database {
         return instance

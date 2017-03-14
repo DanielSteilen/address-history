@@ -1,23 +1,28 @@
 //
-//  PastEntryViewController.swift
+//  PresentEntryViewController.swift
 //  DSteilen-AddressHistory
 //
-//  Created by Daniel Steilen on 3/13/17.
+//  Created by Daniel Steilen on 3/14/17.
 //  Copyright © 2017 DSteilen. All rights reserved.
 //
 
 import UIKit
 
-class PastEntryViewController: UIViewController {
+class PresentEntryViewController: UIViewController {
     var query = ""
     var result = ""
-    
-    @IBOutlet weak var direction: UISegmentedControl!
+
     @IBOutlet weak var addressNum: UITextField!
+    @IBOutlet weak var direction: UISegmentedControl!
     @IBOutlet weak var streetName: UITextField!
     @IBOutlet weak var streetSuffix: UISegmentedControl!
-
+    
     @IBOutlet var textFields: [UITextField]!
+    
+    @IBAction func editEnded(_ sender: UITextField) {
+        sender.resignFirstResponder()
+    }
+    
     
     @IBAction func backgroundTouched(_ sender: UIControl) {
         for tf in textFields {
@@ -25,9 +30,6 @@ class PastEntryViewController: UIViewController {
         }
     }
     
-    @IBAction func editEnded(_ sender: UITextField) {
-        sender.resignFirstResponder()
-    }
     
     @IBAction func convertAddress(_ sender: UIButton) {
         //need to handle missing or incorrect inputs
@@ -37,10 +39,10 @@ class PastEntryViewController: UIViewController {
             if streetName.text!.characters.count < 1 {
                 triggerAlert("Street name cannot be blank")
             } else {
-                let presentAddress = Database.instance.pastToPresent(numString, dir, streetName.text!, suffix)
+                let pastAddress = Database.instance.presentToPast(numString, dir, streetName.text!, suffix)
                 query = addressNum.text! + " " + dir + " " + streetName.text! + " " + suffix
-                result = presentAddress
-                performSegue(withIdentifier: "convert1", sender: sender)
+                result = pastAddress
+                performSegue(withIdentifier: "convert2", sender: sender)
             }
         } else {
             triggerAlert("Address number must be an integer")
@@ -56,9 +58,9 @@ class PastEntryViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let pastResultViewController =
-            segue.destination as? PastResultViewController {
-            let oldAddress = self.query
-            let newAddress = self.result
+            segue.destination as? PresentResultViewController {
+            let newAddress = self.query
+            let oldAddress = self.result
             pastResultViewController.newAddress = newAddress
             pastResultViewController.oldAddress = oldAddress
         }
