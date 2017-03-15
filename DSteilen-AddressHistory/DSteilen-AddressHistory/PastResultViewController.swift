@@ -27,8 +27,13 @@ class PastResultViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        oldAddressLabel.text = oldAddress + " is now:"
-        newAddressLabel.text = newAddress
+        if (newAddress != "Address not found") {
+            oldAddressLabel.text = oldAddress + " is now:"
+            newAddressLabel.text = newAddress
+        } else {
+            oldAddressLabel.text = "Address not found"
+            newAddressLabel.text = ""
+        }
     }
     
 
